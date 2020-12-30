@@ -1,46 +1,39 @@
-# yeelight
-Golang API for [Yeelight](yeelight.com)
+## yeelight
+This is a library to communicate with the Yeelights in your network. It allows you to easily change the color, brightness, power, etc.
 
-Yeelight is simple command line tool and Golang implementation API of Yeelight protocol
-with notification listening support
-
-## Installation
+### Installation
 To install, run:
 ```sh
 go get github.com/newbits/yeelight
 ```
 
-## Usage
+### Usage
 ```go
 func main() {
+	// Discover and retrieve a single Yeelight in the network
 	y, err := yeelight.Discover()
-	checkError(err)
-
-	on, err := y.GetProp("power")
-	checkError(err)
-	fmt.Printf("Power is %s", on[0].(string))
-
-	notifications, done, err := y.Listen()
-	checkError(err)
-	go func() {
-		<-time.After(time.Second)
-		done <- struct{}{}
-	}()
-	for n := range notifications {
-		fmt.Println(n)
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	context.Background().Done()
+	// Toggle power
+	y.Power()
 
+	// Set color
+	y.Color("#112233")
+
+	// Set brightness (percentage)
+	y.Brightness(85)
+
+	// Retrieve single property
+	prop, _ := y.GetProp("power")
+	fmt.Printf("Power is %s", prop[0].(string))
 }
 ```
 
-## API Specification
-Yeelight API Specification [can be found here] (https://www.yeelight.com/download/Yeelight_Inter-Operation_Spec.pdf)
+### API Specification
+The Yeelight API Specification [can be found here](https://www.yeelight.com/download/Yeelight_Inter-Operation_Spec.pdf)
 
-## License
-yeelight is distributed under the [MIT license](https://opensource.org/licenses/MIT)
-
-## Legal
-Yeelight® is a registered trademark of [Yeelight](https://www.yeelight.com/).
+### Legal
+Yeelight is a registered trademark of [Yeelight](https://www.yeelight.com/).
 
