@@ -10,24 +10,24 @@ go get github.com/newbits/yeelight
 ### Usage
 ```go
 func main() {
-	// Discover and retrieve a single Yeelight in the network
-	y, err := yeelight.Discover()
-	if err != nil {
-		log.Fatal(err)
-	}
+  // Discover and retrieve a single Yeelight in the network
+  y, err := yeelight.Discover()
+  if err != nil {
+    log.Fatal(err)
+  }
 
-	// Toggle power
-	y.Power()
+  // Toggle power
+  y.Power()
 
-	// Set color
-	y.Color("#112233")
+  // Set color
+  y.Color("#112233")
 
-	// Set brightness (percentage)
-	y.Brightness(85)
+  // Set brightness (percentage)
+  y.Brightness(85)
 
-	// Retrieve single property
-	prop, _ := y.GetProp("power")
-	fmt.Printf("Power is %s", prop[0].(string))
+  // Retrieve single property
+  prop, _ := y.Prop("power")
+  fmt.Printf("Power is %s", prop[0].(string))
 }
 ```
 
