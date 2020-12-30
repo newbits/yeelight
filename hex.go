@@ -1,27 +1,31 @@
-package color
+package yeelight
 
 import (
 	"errors"
 	"image/color"
 )
 
-func HexStringToRgbInt(s string) (value int, err error) {
+type Hex struct {
+	Value string
+}
+
+func (h Hex) ToRgbInt() (value int, err error) {
 	c := color.RGBA{}
 	c.A = 0xff
 
-	if s[0] != '#' {
+	if h.Value[0] != '#' {
 		return value, errors.New("missing '#' at the beginning of the string")
 	}
 
-	switch len(s) {
+	switch len(h.Value) {
 	case 7:
-		c.R = hexToByte(s[1])<<4 + hexToByte(s[2])
-		c.G = hexToByte(s[3])<<4 + hexToByte(s[4])
-		c.B = hexToByte(s[5])<<4 + hexToByte(s[6])
+		c.R = hexToByte(h.Value[1])<<4 + hexToByte(h.Value[2])
+		c.G = hexToByte(h.Value[3])<<4 + hexToByte(h.Value[4])
+		c.B = hexToByte(h.Value[5])<<4 + hexToByte(h.Value[6])
 	case 4:
-		c.R = hexToByte(s[1]) * 17
-		c.G = hexToByte(s[2]) * 17
-		c.B = hexToByte(s[3]) * 17
+		c.R = hexToByte(h.Value[1]) * 17
+		c.G = hexToByte(h.Value[2]) * 17
+		c.B = hexToByte(h.Value[3]) * 17
 	default:
 		err = errors.New("incorrect value")
 	}

@@ -1,17 +1,17 @@
-package color
+package yeelight
 
 import (
 	"testing"
 )
 
-// TestHexStringToRgbInt passes valid and invalid values to the methods and make assertions.
-func TestHexStringToRgbInt(t *testing.T) {
-	_, err := HexStringToRgbInt("invalid format")
+// TestToRgbInt passes valid and invalid values to the methods and make assertions.
+func TestToRgbInt(t *testing.T) {
+	_, err := Hex{Value: "invalid format"}.ToRgbInt()
 	if err == nil {
 		t.Errorf("Invalid format was passed, but it returned no error.")
 	}
 
-	value, err := HexStringToRgbInt("#112233")
+	value, err := Hex{Value: "#112233"}.ToRgbInt()
 	if err != nil {
 		t.Errorf("Valid format was passed, but error occured.")
 	}
