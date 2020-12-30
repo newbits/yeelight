@@ -49,16 +49,10 @@ type (
 		Code    int    `json:"code"`
 		Message string `json:"message"`
 	}
-
-	//Yeelight represents device
-	Yeelight struct {
-		Address string
-		Random  *rand.Rand
-	}
 )
 
 //Discover discovers device in local network via ssdp
-func Discover() (*Yeelight, error) {
+func Discover() (*Device, error) {
 	var err error
 
 	ssdp, _ := net.ResolveUDPAddr("udp4", ssdpAddr)
@@ -69,33 +63,70 @@ func Discover() (*Yeelight, error) {
 
 	rsBuf := make([]byte, 1024)
 	size, _, err := socket.ReadFromUDP(rsBuf)
+
 	if err != nil {
 		return nil, errors.New("no devices found")
 	}
+
 	rs := rsBuf[0:size]
 	addr := parseAddr(string(rs))
+
 	fmt.Printf("Device with ip %s found\n", addr)
 
 	return New(addr), nil
 }
 
+// DiscoverMany tries to discover many devices at once
+func DiscoverMany() ([]*Device, error) {
+	var devices []*Device
+
+	skipped := 0
+
+	for {
+		device, err := Discover()
+		if err != nil {
+			return devices, err
+		}
+
+		newDevice := true
+		for i := range devices {
+			if devices[i].Address == device.Address {
+				newDevice = false
+			}
+		}
+
+		if newDevice {
+			devices = append(devices, device)
+			continue
+		}
+
+		skipped++
+
+		if skipped >= 3 {
+			break
+		}
+	}
+
+	return devices, nil
+}
+
 //New creates new device instance for address provided
-func New(address string) *Yeelight {
-	return &Yeelight{
+func New(address string) *Device {
+	return &Device{
 		Address: address,
 		Random:  rand.New(rand.NewSource(time.Now().UnixNano())),
 	}
 }
 
 // Listen connects to device and listens for NOTIFICATION events
-func (y *Yeelight) Listen() (<-chan *Notification, chan<- struct{}, error) {
+func (d *Device) Listen() (<-chan *Notification, chan<- struct{}, error) {
 	var err error
 	notifCh := make(chan *Notification)
 	done := make(chan struct{}, 1)
 
-	conn, err := net.DialTimeout("tcp", y.Address, time.Second*3)
+	conn, err := net.DialTimeout("tcp", d.Address, time.Second*3)
 	if err != nil {
-		return nil, nil, fmt.Errorf("cannot connect to %s. %s", y.Address, err)
+		return nil, nil, fmt.Errorf("cannot connect to %s. %s", d.Address, err)
 	}
 
 	fmt.Println("Connection established")
@@ -127,15 +158,4 @@ func (y *Yeelight) Listen() (<-chan *Notification, chan<- struct{}, error) {
 	}(conn)
 
 	return notifCh, done, nil
-}
-
-// GetProp method is used to retrieve current property of smart LED.
-func (d *Device) GetProp(values ...interface{}) ([]interface{}, error) {
-	r, err := d.executeCommand("get_prop", values...)
-
-	if nil != err {
-		return nil, err
-	}
-
-	return r.Result, nil
 }
