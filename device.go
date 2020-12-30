@@ -9,8 +9,6 @@ import (
 	"net/http"
 	"strings"
 	"time"
-
-	"github.com/newbits/yeelight/color"
 )
 
 type Device struct {
@@ -30,7 +28,7 @@ func (d Device) Power() error {
 }
 
 func (d Device) Color(value string) error {
-	c, _ := color.HexStringToRgbInt(value)
+	c, _ := Hex{Value: value}.ToRgbInt()
 
 	_, err := d.executeCommand("set_rgb", c)
 
@@ -51,6 +49,17 @@ func (d Device) Timer(minutes int) error {
 func (d Device) StopTimer() error {
 	_, err := d.executeCommand("cron_del", 0)
 	return err
+}
+
+// Prop method is used to retrieve current property of smart LED.
+func (d *Device) Prop(values ...interface{}) ([]interface{}, error) {
+	r, err := d.executeCommand("get_prop", values...)
+
+	if nil != err {
+		return nil, err
+	}
+
+	return r.Result, nil
 }
 
 func (d *Device) randID() int {
