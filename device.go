@@ -20,7 +20,7 @@ func (d Device) New() *Device {
 	return &d
 }
 
-//Power state toggle for light
+// Power state toggle for light
 func (d Device) Power() error {
 	_, err := d.executeCommand("toggle")
 
@@ -76,12 +76,12 @@ func (d *Device) newCommand(name string, params []interface{}) *Command {
 	}
 }
 
-//executeCommand executes command with provided parameters
+// executeCommand executes command with provided parameters
 func (d *Device) executeCommand(name string, params ...interface{}) (*CommandResult, error) {
 	return d.execute(d.newCommand(name, params))
 }
 
-//executeCommand executes command
+// executeCommand executes command
 func (d *Device) execute(cmd *Command) (*CommandResult, error) {
 
 	conn, err := net.Dial("tcp", d.Address)
@@ -120,7 +120,7 @@ func (d *Device) execute(cmd *Command) (*CommandResult, error) {
 	return &rs, nil
 }
 
-//parseAddr parses address from ssdp response
+// parseAddr parses address from ssdp response
 func parseAddr(msg string) string {
 	if strings.HasSuffix(msg, crlf) {
 		msg = msg + crlf
@@ -138,7 +138,7 @@ func parseAddr(msg string) string {
 	return strings.TrimPrefix(resp.Header.Get("LOCATION"), "yeelight://")
 }
 
-//closeConnection closes network connection
+// closeConnection closes network connection
 func closeConnection(c net.Conn) {
 	if nil != c {
 		c.Close()

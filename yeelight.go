@@ -16,15 +16,15 @@ const (
 	// timeout value for TCP and UDP commands
 	timeout = time.Second * 3
 
-	//SSDP discover address
+	// SSDP discover address
 	ssdpAddr = "239.255.255.250:1982"
 
-	//CR-LF delimiter
+	// CR-LF delimiter
 	crlf = "\r\n"
 )
 
 type (
-	//Command represents COMMAND request to Yeelight device
+	// Command represents COMMAND request to Yeelight device
 	Command struct {
 		ID     int           `json:"id"`
 		Method string        `json:"method"`
@@ -51,7 +51,7 @@ type (
 	}
 )
 
-//Discover discovers device in local network via ssdp
+// Discover discovers a single device in the local network via SSDP
 func Discover() (*Device, error) {
 	var err error
 
@@ -110,7 +110,7 @@ func DiscoverMany() ([]*Device, error) {
 	return devices, nil
 }
 
-//New creates new device instance for address provided
+// New creates new device instance for address provided
 func New(address string) *Device {
 	return &Device{
 		Address: address,

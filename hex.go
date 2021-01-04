@@ -9,6 +9,7 @@ type Hex struct {
 	Value string
 }
 
+// ToRgbInt will convert the value in string to a int value
 func (h Hex) ToRgbInt() (value int, err error) {
 	c := color.RGBA{}
 	c.A = 0xff
