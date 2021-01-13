@@ -9,6 +9,21 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/lucasb-eyer/go-colorful"
+)
+
+const (
+	discoverMSG = "M-SEARCH * HTTP/1.1\r\n HOST:239.255.255.250:1982\r\n MAN:\"ssdp:discover\"\r\n ST:wifi_bulb\r\n"
+
+	// timeout value for TCP and UDP commands
+	timeout = time.Second * 3
+
+	// SSDP discover address
+	ssdpAddr = "239.255.255.250:1982"
+
+	// CR-LF delimiter
+	crlf = "\r\n"
 )
 
 type Device struct {
@@ -27,10 +42,11 @@ func (d Device) Power() error {
 	return err
 }
 
-func (d Device) Color(value string) error {
-	c, _ := Hex{Value: value}.ToRgbInt()
+func (d Device) Color(color string) error {
+	c, _ := colorful.Hex(color)
+	hue, saturation, _ := c.Hsv()
 
-	_, err := d.executeCommand("set_rgb", c)
+	_, err := d.executeCommand("set_hsv", int(hue), int(saturation*100))
 
 	return err
 }

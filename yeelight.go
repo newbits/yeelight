@@ -10,47 +10,6 @@ import (
 	"time"
 )
 
-const (
-	discoverMSG = "M-SEARCH * HTTP/1.1\r\n HOST:239.255.255.250:1982\r\n MAN:\"ssdp:discover\"\r\n ST:wifi_bulb\r\n"
-
-	// timeout value for TCP and UDP commands
-	timeout = time.Second * 3
-
-	// SSDP discover address
-	ssdpAddr = "239.255.255.250:1982"
-
-	// CR-LF delimiter
-	crlf = "\r\n"
-)
-
-type (
-	// Command represents COMMAND request to Yeelight device
-	Command struct {
-		ID     int           `json:"id"`
-		Method string        `json:"method"`
-		Params []interface{} `json:"params"`
-	}
-
-	// CommandResult represents response from Yeelight device
-	CommandResult struct {
-		ID     int           `json:"id"`
-		Result []interface{} `json:"result,omitempty"`
-		Error  *Error        `json:"error,omitempty"`
-	}
-
-	// Notification represents notification response
-	Notification struct {
-		Method string            `json:"method"`
-		Params map[string]string `json:"params"`
-	}
-
-	//Error struct represents error part of response
-	Error struct {
-		Code    int    `json:"code"`
-		Message string `json:"message"`
-	}
-)
-
 // Discover discovers a single device in the local network via SSDP
 func Discover() (*Device, error) {
 	var err error
