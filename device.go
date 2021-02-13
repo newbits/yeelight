@@ -35,9 +35,27 @@ func (d Device) New() *Device {
 	return &d
 }
 
+func (d Device) GetStatus() error {
+	_, err := d.Prop("power", "rgb", "hsv", "bright", "ct", "hue", "sat", "name")
+
+	return err
+}
+
 // Power state toggle for light
 func (d Device) Power() error {
 	_, err := d.executeCommand("toggle")
+
+	return err
+}
+
+func (d Device) PowerOn() error {
+	_, err := d.executeCommand("set_power", "on")
+
+	return err
+}
+
+func (d Device) PowerOff() error {
+	_, err := d.executeCommand("set_power", "off")
 
 	return err
 }
