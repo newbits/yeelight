@@ -49,13 +49,13 @@ func (d Device) Power() error {
 }
 
 func (d Device) PowerOn() error {
-	_, err := d.executeCommand("set_power", "on")
+	_, err := d.executeCommand("set_power", "on", "sudden", 0)
 
 	return err
 }
 
 func (d Device) PowerOff() error {
-	_, err := d.executeCommand("set_power", "off")
+	_, err := d.executeCommand("set_power", "off", "sudden", 0)
 
 	return err
 }
@@ -123,7 +123,6 @@ func (d *Device) execute(cmd *Command) (*CommandResult, error) {
 		return nil, fmt.Errorf("cannot open connection to %s. %s", d.Address, err)
 	}
 
-	time.Sleep(time.Second)
 	conn.SetReadDeadline(time.Now().Add(timeout))
 
 	//write request/command
@@ -137,6 +136,8 @@ func (d *Device) execute(cmd *Command) (*CommandResult, error) {
 	if err != nil {
 		return nil, fmt.Errorf("cannot read command result %s", err)
 	}
+
+	defer conn.Close()
 
 	var rs CommandResult
 	err = json.Unmarshal([]byte(res), &rs)

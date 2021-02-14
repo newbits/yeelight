@@ -23,6 +23,8 @@ func Discover() (*Device, error) {
 	rsBuf := make([]byte, 1024)
 	size, _, err := socket.ReadFromUDP(rsBuf)
 
+	defer socket.Close()
+
 	if err != nil {
 		return nil, errors.New("no devices found")
 	}
